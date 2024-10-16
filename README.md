@@ -30,7 +30,7 @@ pip install pillow matplotlib
 
 ### 1. Clone or download the repository
 ```bash
-git clone https://github.com/your-username/image-cropper.git
+git clone git@github.com:moe-sani/image-cropping-python.git
 cd image-cropper
 ```
 
@@ -103,7 +103,7 @@ plt.show()
 ### Example Image
 Here is an example of how the cropped images will be displayed:
 
-![Sample Image](path_to_image_example.png)
+![Sample Image](outputs/road421.png)
 
 ## License
 
