@@ -1,0 +1,26 @@
+{
+    "version": 1,
+    "type": "transform",
+    "info": {
+        "name": "moe cropping test block new",
+        "description": "crops the image",
+        "operatesOn": "directory",
+        "transformMountpoints": []
+    },
+    "parameters": [
+        {
+            "name": "Crop width",
+            "value": "",
+            "type": "int",
+            "param": "crop-width",
+            "help": "Desired crop size in pixels, specified as two integers for width (e.g., 300 )"
+        },
+        {
+            "name": "Crop height",
+            "value": "",
+            "type": "int",
+            "param": "crop-height",
+            "help": "Desired crop size in pixels, specified as two integers for height (e.g., 300)"
+        }
+    ]
+}
