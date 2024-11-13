@@ -88,9 +88,3 @@ Here is an example of how the cropped images will be displayed:
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-Feel free to adjust the repository name or any specific paths and details as necessary. You can also include an example image under the "Example Image" section if you'd like to showcase one of the cropped images visually.
-
-Let me know if you need further modifications!
