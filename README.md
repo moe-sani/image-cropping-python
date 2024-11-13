@@ -1,9 +1,4 @@
-# image-cropping-python
-Sure! Below is a detailed `README.md` file that you can use when publishing your project to GitHub:
-
----
-
-# Image Cropper - Batch Crop and Save Images
+# image-cropping-python - Image Cropper - Batch Crop and Save Images
 
 This Python project allows you to batch crop multiple images in a folder to a specified size and save the cropped versions to a new folder. The script is designed to be used in a Jupyter Notebook and provides a visual preview of the first few cropped images. This is useful for image preprocessing tasks like dataset preparation, image resizing for thumbnails, and other image manipulation tasks.
 
