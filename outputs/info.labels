@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "files": [
+        {
+            "path": "bristol275.png",
+            "category": "split",
+            "label": {
+                "type": "unlabeled"
+            },
+            "metadata": {
+                "Cropped": "Yes"
+            }
+        },
+        {
+            "path": "road584.png",
+            "category": "split",
+            "label": {
+                "type": "unlabeled"
+            },
+            "metadata": {
+                "Cropped": "No"
+            }
+        },
+        {
+            "path": "road127.png",
+            "category": "split",
+            "label": {
+                "type": "unlabeled"
+            },
+            "metadata": {
+                "Cropped": "No"
+            }
+        }
+    ]
+}

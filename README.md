@@ -79,11 +79,47 @@ edge-impulse-blocks push
 ```
 For more information about how to configure transformation blocks, refer to [Edge Impulse Transformation blocks](https://docs.edgeimpulse.com/docs/edge-impulse-studio/organizations/custom-blocks/transformation-blocks)
 
+### Cropped Status Tracking
+The crop_image function returns True if the image was cropped and False if it was skipped (i.e., the image is smaller than the crop size).
+After processing, the script generates an info.labels JSON file in the output directory with metadata for each processed image.
+The "path" is set to the image filename. "Cropped" in metadata is set to "Yes" if the image was cropped and "No" if it was saved without cropping.
+
+```json
+{
+    "version": 1,
+    "files": [
+        {
+            "path": "road100.png",
+            "category": "split",
+            "label": { "type": "unlabeled" },
+            "metadata": {
+                "Cropped": "Yes"
+            }
+        },
+        {
+            "path": "road101.png",
+            "category": "split",
+            "label": { "type": "unlabeled" },
+            "metadata": {
+                "Cropped": "No"
+            }
+        }
+    ]
+}
+
+```
+
 ### Viewing Output
 The output folder will contain all the cropped images. In addition, the notebook will display the first few cropped images in a matplotlib plot.
-Here is an example of how the cropped images will be displayed:
+Here is an example:
 
-![Sample Image](outputs/road421.png)
+Original:
+
+![Original](inputs/bristol275.png)
+
+Cropped:
+
+![Cropped](outputs/bristol275.png)
 
 ## License
 

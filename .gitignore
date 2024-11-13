@@ -162,3 +162,4 @@ cython_debug/
 #.idea/
 
 .ei-block-config
+.DS_Store
