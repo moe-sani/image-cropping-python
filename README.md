@@ -1,6 +1,6 @@
-# image-cropping-python - Image Cropper - Batch Crop and Save Images
+# image-cropping-python - Transformation Block - Batch Crop and Save Images
 
-This Python project allows you to batch crop multiple images in a folder to a specified size and save the cropped versions to a new folder. The script is designed to be used in a Jupyter Notebook and provides a visual preview of the first few cropped images. This is useful for image preprocessing tasks like dataset preparation, image resizing for thumbnails, and other image manipulation tasks.
+This Transformation block allows you to batch crop multiple images in a folder to a specified size and save the cropped versions to a new folder. The script is designed to be used in a Jupyter Notebook and provides a visual preview of the first few cropped images. This is useful for image preprocessing tasks like dataset preparation, image resizing for thumbnails, and other image manipulation tasks.
 
 ## Features
 - Batch processing of images from a folder.
@@ -21,7 +21,7 @@ You can install the necessary libraries using pip:
 pip install pillow matplotlib
 ```
 
-## Usage
+## Usage in Jupyter notebook
 
 ### 1. Clone or download the repository
 ```bash
@@ -52,50 +52,35 @@ Execute the notebook cells. The script will:
 3. Save the cropped images to the output folder.
 4. Display the first few cropped images as a sample.
 
-### Example Code
-Here's a quick look at the core function:
+## Usage as a Python Script
+Run this script from the command line, specifying the crop width and height separately:
 
-```python
-def crop_images(input_folder, output_folder, crop_size, show_samples=3):
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
-    
-    # Get list of image files in input folder
-    image_files = [f for f in os.listdir(input_folder) if f.endswith(('.png', '.jpg', '.jpeg', '.bmp'))]
-    
-    sample_images = []
-    
-    for idx, image_file in enumerate(image_files):
-        img_path = os.path.join(input_folder, image_file)
-        img = Image.open(img_path)
-
-        width, height = img.size
-        left = (width - crop_size[0]) / 2
-        top = (height - crop_size[1]) / 2
-        right = (width + crop_size[0]) / 2
-        bottom = (height + crop_size[1]) / 2
-
-        cropped_img = img.crop((left, top, right, bottom))
-        cropped_img.save(os.path.join(output_folder, image_file))
-
-        if idx < show_samples:
-            sample_images.append(cropped_img)
-    
-    return sample_images
+```bash
+python transform.py --in-directory path/to/input_folder --out-directory path/to/output_folder --crop-width 300 --crop-height 300
 ```
 
-### 5. Viewing Output
-The output folder will contain all the cropped images. In addition, the notebook will display the first few cropped images in a matplotlib plot, which looks like this:
+Arguments
 
-```python
-fig, axes = plt.subplots(1, len(cropped_samples), figsize=(15, 5))
-for i, img in enumerate(cropped_samples):
-    axes[i].imshow(img)
-    axes[i].axis('off')
-plt.show()
+* `--crop-width`: The desired width for cropping.
+* `--crop-height`: The desired height for cropping.
+* `--in-directory`: Path to the folder containing the images to crop.
+* `--out-directory`: Path to the folder where cropped images will be saved.
+
+#### Notes
+* Images smaller than the specified crop-width or crop-height are skipped, and a message is printed for each skipped image.
+* The output directory is created if it doesn’t already exist.
+
+### Usage as a Transformation Block in Edge Impulse
+
+This folder has been built to be compatible with Edge Impulse Transfomation block. Simply push this to your project:
+```bash
+edge-impulse-blocks init
+edge-impulse-blocks push
 ```
+For more information about how to configure transformation blocks, refer to [Edge Impulse Transformation blocks](https://docs.edgeimpulse.com/docs/edge-impulse-studio/organizations/custom-blocks/transformation-blocks)
 
-### Example Image
+### Viewing Output
+The output folder will contain all the cropped images. In addition, the notebook will display the first few cropped images in a matplotlib plot.
 Here is an example of how the cropped images will be displayed:
 
 ![Sample Image](outputs/road421.png)
