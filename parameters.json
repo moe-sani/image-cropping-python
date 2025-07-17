@@ -21,6 +21,20 @@
             "type": "int",
             "param": "crop-height",
             "help": "Desired crop size in pixels, specified as two integers for height (e.g., 300)"
+        },
+        {
+            "name": "Crop start X",
+            "value": "",
+            "type": "int",
+            "param": "crop-x",
+            "help": "Optional: X coordinate for the top-left corner of the crop box. If not set, cropping is centered horizontally."
+        },
+        {
+            "name": "Crop start Y",
+            "value": "",
+            "type": "int",
+            "param": "crop-y",
+            "help": "Optional: Y coordinate for the top-left corner of the crop box. If not set, cropping is centered vertically."
         }
     ]
 }
