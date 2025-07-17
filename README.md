@@ -37,12 +37,16 @@ In the notebook, you'll need to set the following parameters:
 - **`input_folder`**: Path to the folder containing the images you want to crop.
 - **`output_folder`**: Path to the folder where cropped images will be saved.
 - **`crop_size`**: Tuple specifying the size of the crop in `(width, height)` format.
+- **`crop_x`** (optional): X coordinate for the top-left corner of the crop box. If not set, cropping is centered horizontally.
+- **`crop_y`** (optional): Y coordinate for the top-left corner of the crop box. If not set, cropping is centered vertically.
 
 For example:
 ```python
 input_folder = 'path/to/your/input/folder'
 output_folder = 'path/to/your/output/folder'
 crop_size = (300, 300)
+crop_x = 50  # Optional
+crop_y = 100 # Optional
 ```
 
 ### 4. Run the Notebook
@@ -53,16 +57,18 @@ Execute the notebook cells. The script will:
 4. Display the first few cropped images as a sample.
 
 ## Usage as a Python Script
-Run this script from the command line, specifying the crop width and height separately:
+Run this script from the command line, specifying the crop width and height separately. You can also optionally specify the crop start x and y positions:
 
 ```bash
-python transform.py --in-directory path/to/input_folder --out-directory path/to/output_folder --crop-width 300 --crop-height 300
+python transform.py --in-directory path/to/input_folder --out-directory path/to/output_folder --crop-width 300 --crop-height 300 --crop-x 50 --crop-y 100
 ```
 
 Arguments
 
 * `--crop-width`: The desired width for cropping.
 * `--crop-height`: The desired height for cropping.
+* `--crop-x`: *(Optional)* X coordinate for the top-left corner of the crop box. If not set, cropping is centered horizontally.
+* `--crop-y`: *(Optional)* Y coordinate for the top-left corner of the crop box. If not set, cropping is centered vertically.
 * `--in-directory`: Path to the folder containing the images to crop.
 * `--out-directory`: Path to the folder where cropped images will be saved.
 
