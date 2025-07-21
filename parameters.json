@@ -2,8 +2,8 @@
     "version": 1,
     "type": "transform",
     "info": {
-        "name": "moe cropping test block new",
-        "description": "crops the image",
+        "name": "Image Cropper with coordinates",
+        "description": "crops images to a specified size with optional coordinates for the crop box",
         "operatesOn": "directory",
         "transformMountpoints": []
     },
