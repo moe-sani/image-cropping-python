@@ -42,6 +42,13 @@
             "type": "float",
             "param": "frame-interval",
             "help": "For video files: interval in seconds between frames to extract and crop. Default is 1.0."
-        }
+        },
+        {
+        "name": "Process Percent",
+        "value": 100.0,
+        "type": "float",
+        "help": "Percentage of the video to process (0-100). Useful for skipping long videos.",
+        "param": "process-percent"
+      }
     ]
 }
