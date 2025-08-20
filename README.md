@@ -1,24 +1,27 @@
-# image-cropping-python - Transformation Block - Batch Crop and Save Images
 
-This Transformation block allows you to batch crop multiple images in a folder to a specified size and save the cropped versions to a new folder. The script is designed to be used in a Jupyter Notebook and provides a visual preview of the first few cropped images. This is useful for image preprocessing tasks like dataset preparation, image resizing for thumbnails, and other image manipulation tasks.
+# image-cropping-python - Transformation Block - Batch Crop, Video Frame Extraction, and Save Images
+
+
+This Transformation block allows you to batch crop multiple images and extract/crop frames from videos in a folder to a specified size, saving the cropped versions to a new folder. The script can be used in a Jupyter Notebook or as a command-line tool. For videos, frames are extracted at a user-defined interval and cropped just like images. This is useful for image preprocessing tasks like dataset preparation, video dataset creation, image resizing for thumbnails, and other image manipulation tasks.
 
 ## Features
-- Batch processing of images from a folder.
+- Batch processing of images and videos from a folder.
 - Crops images to a user-defined size.
+- For videos, extracts frames at a user-defined interval (in seconds), crops, and saves as images.
 - Saves the cropped images in a specified output folder.
-- Displays a preview of the first few cropped images for quick verification.
-  
+- Displays a preview of the first few cropped images for quick verification (notebook only).
 ## Requirements
 
-Before running the notebook, make sure you have the following libraries installed:
+Before running the notebook or script, make sure you have the following libraries installed:
 
+- `opencv-python` (for video frame extraction)
 - `Pillow` (for image manipulation)
 - `matplotlib` (for displaying the cropped image samples)
 
 You can install the necessary libraries using pip:
 
 ```bash
-pip install pillow matplotlib
+pip install opencv-python pillow matplotlib
 ```
 
 ## Usage in Jupyter notebook
@@ -56,11 +59,13 @@ Execute the notebook cells. The script will:
 3. Save the cropped images to the output folder.
 4. Display the first few cropped images as a sample.
 
+
 ## Usage as a Python Script
-Run this script from the command line, specifying the crop width and height separately. You can also optionally specify the crop start x and y positions:
+
+Run this script from the command line, specifying the crop width and height separately. You can also optionally specify the crop start x and y positions, and for videos, the frame interval:
 
 ```bash
-python transform.py --in-directory path/to/input_folder --out-directory path/to/output_folder --crop-width 300 --crop-height 300 --crop-x 50 --crop-y 100
+python transform.py --in-directory path/to/input_folder --out-directory path/to/output_folder --crop-width 300 --crop-height 300 --crop-x 50 --crop-y 100 --frame-interval 2.0
 ```
 
 Arguments
@@ -69,12 +74,16 @@ Arguments
 * `--crop-height`: The desired height for cropping.
 * `--crop-x`: *(Optional)* X coordinate for the top-left corner of the crop box. If not set, cropping is centered horizontally.
 * `--crop-y`: *(Optional)* Y coordinate for the top-left corner of the crop box. If not set, cropping is centered vertically.
-* `--in-directory`: Path to the folder containing the images to crop.
+* `--frame-interval`: *(Optional, videos only)* Interval in seconds between frames to extract and crop. Default is 1.0.
+* `--in-directory`: Path to the folder containing the images and/or videos to crop.
 * `--out-directory`: Path to the folder where cropped images will be saved.
 
 #### Notes
 * Images smaller than the specified crop-width or crop-height are skipped, and a message is printed for each skipped image.
+* For videos, frames are extracted at the specified interval and saved as PNG images.
 * The output directory is created if it doesn’t already exist.
+* Supported video formats: .avi, .mp4, .mov, .mkv, .webm
+* Supported image formats: .png, .jpg, .jpeg, .bmp
 
 ### Usage as a Transformation Block in Edge Impulse
 

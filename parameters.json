@@ -35,6 +35,13 @@
             "type": "int",
             "param": "crop-y",
             "help": "Optional: Y coordinate for the top-left corner of the crop box. If not set, cropping is centered vertically."
+        },
+        {
+            "name": "Frame interval (seconds)",
+            "value": "1.0",
+            "type": "float",
+            "param": "frame-interval",
+            "help": "For video files: interval in seconds between frames to extract and crop. Default is 1.0."
         }
     ]
 }
