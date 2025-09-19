@@ -1,8 +1,11 @@
+
 import os
 import sys
 import json
 import argparse
 from PIL import Image
+import cv2
+import math
 
 print(sys.argv[1:])
 
@@ -36,23 +39,32 @@ def crop_image(input_path, output_path, crop_width, crop_height, crop_x=None, cr
         print(f"Saved cropped image to {output_path}")
         return True
 
-def crop_images_in_directory(input_dir, output_dir, crop_width, crop_height, crop_x=None, crop_y=None):
-    """Processes all images in the input directory, cropping and saving them to the output directory.
+def crop_images_in_directory(input_dir, output_dir, crop_width, crop_height, crop_x=None, crop_y=None, process_percent=100.0):
+    """Processes all images and videos in the input directory, cropping and saving them to the output directory.
+       For videos, extracts frames at a specified interval, crops, and saves as images.
        Also generates info.labels file in the output directory with metadata for each image."""
     if not os.path.exists(input_dir):
         raise FileNotFoundError(f"The input directory {input_dir} does not exist.")
-    
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    # Supported image formats
+    # Supported formats
     image_extensions = ('.png', '.jpg', '.jpeg', '.bmp')
+    video_extensions = ('.avi', '.mp4', '.mov', '.mkv', '.webm')
     images_processed = 0
     file_data = []
 
+    # Get frame interval from global variable (set in main)
+    global FRAME_INTERVAL
+    frame_interval = FRAME_INTERVAL if 'FRAME_INTERVAL' in globals() else 1.0
+    # Get process percent from global variable (set in main)
+    global PROCESS_PERCENT
+    process_percent = PROCESS_PERCENT if 'PROCESS_PERCENT' in globals() else process_percent
+
     for file_name in os.listdir(input_dir):
-        if file_name.lower().endswith(image_extensions):
-            input_path = os.path.join(input_dir, file_name)
+        input_path = os.path.join(input_dir, file_name)
+        lower_name = file_name.lower()
+        if lower_name.endswith(image_extensions):
             output_path = os.path.join(output_dir, file_name)
             cropped = crop_image(input_path, output_path, crop_width, crop_height, crop_x, crop_y)
             images_processed += 1
@@ -61,20 +73,80 @@ def crop_images_in_directory(input_dir, output_dir, crop_width, crop_height, cro
                 "category": "split",
                 "label": { "type": "unlabeled" },
                 "metadata": {
-                    "Cropped": "Yes" if cropped else "No"
+                    "Cropped": "Yes" if cropped else "No",
+                    "SourceType": "image"
                 }
             })
-    
+        elif lower_name.endswith(video_extensions):
+            # Process video: extract frames at interval, crop, save
+            cap = cv2.VideoCapture(input_path)
+            if not cap.isOpened():
+                print(f"Warning: Could not open video {input_path}")
+                continue
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            duration = total_frames / fps if fps > 0 else 0
+            frame_gap = int(math.ceil(frame_interval * fps)) if fps > 0 else 1
+            # Calculate max frame to process based on process_percent
+            if process_percent < 100.0:
+                max_frame = int(total_frames * (process_percent / 100.0))
+            else:
+                max_frame = total_frames
+            frame_idx = 0
+            saved_idx = 0
+            while True:
+                ret, frame = cap.read()
+                if not ret or frame_idx >= max_frame:
+                    break
+                if frame_idx % frame_gap == 0:
+                    # Convert to PIL Image for cropping
+                    img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+                    width, height = img.size
+                    if width < crop_width or height < crop_height:
+                        print(f"Skipping frame {frame_idx} of {file_name}: frame smaller than crop dimensions.")
+                        cropped = False
+                    else:
+                        if crop_x is not None and crop_y is not None:
+                            left = crop_x
+                            top = crop_y
+                        else:
+                            left = (width - crop_width) / 2
+                            top = (height - crop_height) / 2
+                        left = max(0, min(left, width - crop_width))
+                        top = max(0, min(top, height - crop_height))
+                        right = left + crop_width
+                        bottom = top + crop_height
+                        cropped_img = img.crop((left, top, right, bottom))
+                        out_name = f"{os.path.splitext(file_name)[0]}_frame{frame_idx}.png"
+                        output_path = os.path.join(output_dir, out_name)
+                        cropped_img.save(output_path)
+                        cropped = True
+                        images_processed += 1
+                        file_data.append({
+                            "path": out_name,
+                            "category": "split",
+                            "label": { "type": "unlabeled" },
+                            "metadata": {
+                                "Cropped": "Yes" if cropped else "No",
+                                "SourceType": "video",
+                                "VideoFile": str(file_name),
+                                "FrameIndex": str(frame_idx),
+                                "TimeSec": str(round(frame_idx / fps, 2)) if fps > 0 else ""
+                            }
+                        })
+                        saved_idx += 1
+                frame_idx += 1
+            cap.release()
+            print(f"Processed {saved_idx} frames from video {file_name} (up to {process_percent}% of video)")
+
     # Generate info.labels file
     info_labels = {
         "version": 1,
         "files": file_data
     }
-    
     # Save info.labels to output directory
     with open(os.path.join(output_dir, "info.labels"), "w") as f:
         json.dump(info_labels, f, indent=4)
-    
     print(f"Processing complete. {images_processed} images processed.")
     print(f"info.labels file saved in {output_dir}")
 
@@ -107,21 +179,29 @@ def crop_images(input_folder, output_folder, crop_size, show_samples=3, crop_x=N
     return sample_images
 
 def main():
-    parser = argparse.ArgumentParser(description="Crop all images in a directory to a specified width and height.")
-    parser.add_argument("--in-directory", required=True, help="Path to the input directory containing images.")
+    parser = argparse.ArgumentParser(description="Crop all images and videos in a directory to a specified width and height. For videos, extract frames at a specified interval.")
+    parser.add_argument("--in-directory", required=True, help="Path to the input directory containing images/videos.")
     parser.add_argument("--out-directory", required=True, help="Path to the output directory for cropped images.")
     parser.add_argument("--crop-width", required=True, type=int, help="Desired crop width.")
     parser.add_argument("--crop-height", required=True, type=int, help="Desired crop height.")
     parser.add_argument("--crop-x", required=False, type=int, help="Crop start x position (optional).")
     parser.add_argument("--crop-y", required=False, type=int, help="Crop start y position (optional).")
+    parser.add_argument("--frame-interval", required=False, type=float, default=1.0, help="Interval in seconds between frames to extract from video (default: 1.0)")
+    parser.add_argument("--process-percent", required=False, type=float, default=100.0, help="Percentage of the video to process (0-100). Useful for skipping long videos.")
     parser.add_argument("--hmac-key", required=False, type=int, help="hmac-key.")
 
     args = parser.parse_args()
+    # Set global for frame interval
+    global FRAME_INTERVAL
+    FRAME_INTERVAL = args.frame_interval
+    global PROCESS_PERCENT
+    PROCESS_PERCENT = args.process_percent
     try:
         crop_images_in_directory(
             args.in_directory, args.out_directory,
             args.crop_width, args.crop_height,
-            args.crop_x, args.crop_y
+            args.crop_x, args.crop_y,
+            args.process_percent
         )
     except Exception as e:
         print(f"Error: {e}")
